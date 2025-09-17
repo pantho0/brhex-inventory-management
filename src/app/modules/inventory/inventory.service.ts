@@ -8,7 +8,7 @@ const addInventoryItemIntoDB = async (payload: IInventoryItem) => {
   session.startTransaction();
 
   try {
-    const inventoryItem = await InventoryItem.create(payload, { session });
+    const inventoryItem = await InventoryItem.create([payload], { session });
     const now = new Date();
 
     const productStockUpdate = await ProductStock.updateOne(
