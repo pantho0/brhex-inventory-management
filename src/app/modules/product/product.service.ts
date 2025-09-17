@@ -6,6 +6,12 @@ const createProductIntoDB = async (payload: IProduct) => {
   return result;
 };
 
+const getAllProductFromDB = async () => {
+  const result = await Product.find().populate('category');
+  return result;
+};
+
 export const ProductService = {
   createProductIntoDB,
+  getAllProductFromDB,
 };
