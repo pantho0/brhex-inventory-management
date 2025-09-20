@@ -71,7 +71,7 @@ const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
     );
 
     await session.commitTransaction();
-    return invoice;
+    return invoice[0];
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
