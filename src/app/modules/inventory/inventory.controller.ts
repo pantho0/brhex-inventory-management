@@ -14,6 +14,17 @@ const addInventoryItem = catchAsync(async (req, res) => {
   });
 });
 
+const getInventoryItems = catchAsync(async (req, res) => {
+  const result = await InventoryService.getInventoryItemsFromDB();
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Inventory items fetched successfully',
+    data: result,
+  });
+});
+
 export const InventoryController = {
   addInventoryItem,
+  getInventoryItems,
 };

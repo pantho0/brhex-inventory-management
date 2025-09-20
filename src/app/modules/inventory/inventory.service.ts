@@ -29,6 +29,12 @@ const addInventoryItemIntoDB = async (payload: IInventoryItem) => {
   }
 };
 
+const getInventoryItemsFromDB = async () => {
+  const inventoryItems = await InventoryItem.find();
+  return inventoryItems;
+};
+
 export const InventoryService = {
   addInventoryItemIntoDB,
+  getInventoryItemsFromDB,
 };

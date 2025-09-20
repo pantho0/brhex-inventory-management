@@ -3,6 +3,7 @@ import { CategoryRoute } from '../modules/category/category.route';
 import { ProductRoute } from '../modules/product/product.route';
 import { ProductStockRoute } from '../modules/productStock/productStock.route';
 import { InventoryRoute } from '../modules/inventory/inventory.route';
+import { InvoiceRoute } from '../modules/invoice/invoice.route';
 
 const router = Router();
 
@@ -22,6 +23,10 @@ const moduleRoutes = [
   {
     path: '/inventory',
     route: InventoryRoute,
+  },
+  {
+    path: '/invoice',
+    route: InvoiceRoute,
   },
 ];
 

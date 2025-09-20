@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { IInvoice } from './invoice.interface';
 import { Invoice } from './invoice.model';
 import { ProductStock } from '../productStock/productStock.model';
+import { InventoryItem } from '../inventory/inventory.model';
 
 const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
   const session = await mongoose.startSession();
@@ -57,8 +58,23 @@ const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
       { session },
     );
 
-    const serialNumbers = items.map((i: any) => i.serialNumbers);
+    const productsIds = items.map((i: any) => i.product);
     await ProductStock.updateMany(
+      {
+        product: { $in: productsIds },
+      },
+      {
+        $set: {
+          inStock: { $inc: -1 },
+          sold: { $inc: +1 },
+        },
+      },
+      { session },
+    );
+
+    const serialNumbers = items.map((i: any) => i.serialNumbers);
+
+    await InventoryItem.updateMany(
       {
         serialNumber: { $in: serialNumbers },
       },
