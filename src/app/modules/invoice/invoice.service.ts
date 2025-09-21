@@ -99,6 +99,12 @@ const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
   }
 };
 
+const getAllInvoicesFromDB = async () => {
+  const result = await Invoice.find();
+  return result;
+};
+
 export const InvoiceService = {
   createInvoiceIntoDB,
+  getAllInvoicesFromDB,
 };
