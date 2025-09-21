@@ -58,21 +58,23 @@ const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
       { session },
     );
 
-    const productsIds = items.map((i: any) => i.product);
+    const productsIds = items.map((i: any) => i.productId);
+
     await ProductStock.updateMany(
       {
         product: { $in: productsIds },
       },
       {
-        $set: {
-          inStock: { $inc: -1 },
-          sold: { $inc: +1 },
+        $inc: {
+          inStock: -1,
+          sold: 1,
         },
       },
       { session },
     );
 
-    const serialNumbers = items.map((i: any) => i.serialNumbers);
+    const serialNumbers = items.map((i: any) => i.serialNumber);
+    console.log(serialNumbers);
 
     await InventoryItem.updateMany(
       {
