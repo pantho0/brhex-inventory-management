@@ -3,6 +3,8 @@ import { IInvoice } from './invoice.interface';
 import { Invoice } from './invoice.model';
 import { ProductStock } from '../productStock/productStock.model';
 import { InventoryItem } from '../inventory/inventory.model';
+import AppError from '../../errors/AppError';
+import status from 'http-status';
 
 const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
   const session = await mongoose.startSession();
@@ -104,7 +106,37 @@ const getAllInvoicesFromDB = async () => {
   return result;
 };
 
+const updatPayment = async (id: string, paymentData: any) => {
+  const { amount, method } = paymentData;
+
+  const invoice = await Invoice.findById(id);
+
+  if (!invoice) {
+    throw new AppError(status.NOT_FOUND, 'Invoice not found');
+  }
+
+  invoice.paidAmount += amount;
+  invoice.dueAmount = Math.max(invoice.total - invoice.paidAmount, 0);
+
+  invoice.paymentStatus =
+    invoice.dueAmount === 0
+      ? 'paid'
+      : invoice.paidAmount > 0
+        ? 'partial'
+        : 'due';
+
+  invoice.paymentHistory.push({
+    date: new Date(),
+    amount,
+    method,
+  });
+
+  await invoice.save();
+  return invoice;
+};
+
 export const InvoiceService = {
   createInvoiceIntoDB,
   getAllInvoicesFromDB,
+  updatPayment,
 };

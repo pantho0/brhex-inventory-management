@@ -23,7 +23,21 @@ const getAllInvoices = catchAsync(async (req, res) => {
   });
 });
 
+const updatePayment = catchAsync(async (req, res) => {
+  const result = await InvoiceService.updatPayment(
+    req.params.id as string,
+    req.body,
+  );
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Payment updated successfully',
+    data: result,
+  });
+});
+
 export const InvoiceController = {
   createInvoice,
   getAllInvoices,
+  updatePayment,
 };
