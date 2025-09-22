@@ -24,7 +24,20 @@ const getInventoryItems = catchAsync(async (req, res) => {
   });
 });
 
+const getInventoryBySerial = catchAsync(async (req, res) => {
+  const result = await InventoryService.getInventoryBySerialFromDB(
+    req.params.serialNumber as string,
+  );
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Inventory item fetched successfully',
+    data: result,
+  });
+});
+
 export const InventoryController = {
   addInventoryItem,
   getInventoryItems,
+  getInventoryBySerial,
 };

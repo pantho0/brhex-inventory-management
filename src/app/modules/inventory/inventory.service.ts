@@ -30,11 +30,28 @@ const addInventoryItemIntoDB = async (payload: IInventoryItem) => {
 };
 
 const getInventoryItemsFromDB = async () => {
-  const inventoryItems = await InventoryItem.find();
+  const inventoryItems = await InventoryItem.find().populate({
+    path: 'product',
+    populate: {
+      path: 'category',
+    },
+  });
+
   return inventoryItems;
+};
+
+const getInventoryBySerialFromDB = async (serialNumber: string) => {
+  const inventoryItem = await InventoryItem.findOne({ serialNumber }).populate({
+    path: 'product',
+    populate: {
+      path: 'category',
+    },
+  });
+  return inventoryItem;
 };
 
 export const InventoryService = {
   addInventoryItemIntoDB,
   getInventoryItemsFromDB,
+  getInventoryBySerialFromDB,
 };

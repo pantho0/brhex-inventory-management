@@ -5,5 +5,6 @@ const router = Router();
 
 router.post('/add-inventory-item', InventoryController.addInventoryItem);
 router.get('/', InventoryController.getInventoryItems);
+router.get('/:serialNumber', InventoryController.getInventoryBySerial);
 
 export const InventoryRoute = router;
