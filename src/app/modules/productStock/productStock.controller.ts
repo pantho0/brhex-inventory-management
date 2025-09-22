@@ -13,6 +13,19 @@ const getAllProductStock = catchAsync(async (req, res, next) => {
   });
 });
 
+const getSingleProductStock = catchAsync(async (req, res) => {
+  const result = await ProductStockService.getSingleProductStockFromDB(
+    req.params.id as string,
+  );
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Product Stock fetched successfully',
+    data: result,
+  });
+});
+
 export const ProductStockController = {
   getAllProductStock,
+  getSingleProductStock,
 };
