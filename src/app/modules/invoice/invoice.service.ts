@@ -85,6 +85,7 @@ const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
       {
         $set: {
           status: 'sold',
+          soldAt: new Date(),
         },
       },
       { session },

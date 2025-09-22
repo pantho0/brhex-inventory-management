@@ -5,5 +5,6 @@ export interface IInventoryItem {
   serialNumber: string;
   status?: 'in_stock' | 'sold' | 'in_warranty' | 'returned';
   soldAt?: Date;
+  purchased_price: number;
   price: number;
 }

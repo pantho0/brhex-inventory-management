@@ -11,7 +11,21 @@ const getAllProductFromDB = async () => {
   return result;
 };
 
+const getSingleProductFromDB = async (id: string) => {
+  const result = await Product.findById(id).populate('category');
+  return result;
+};
+
+const updateProductIntoDB = async (id: string, payload: IProduct) => {
+  const result = await Product.findByIdAndUpdate(id, payload, {
+    new: true,
+  }).populate('category');
+  return result;
+};
+
 export const ProductService = {
   createProductIntoDB,
   getAllProductFromDB,
+  getSingleProductFromDB,
+  updateProductIntoDB,
 };
