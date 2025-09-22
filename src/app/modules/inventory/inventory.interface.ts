@@ -8,3 +8,11 @@ export interface IInventoryItem {
   purchased_price: number;
   price: number;
 }
+
+export type Period = 'daily' | 'weekly' | 'monthly' | 'yearly';
+
+export interface SalesSummaryOptions {
+  periods: Period[];
+  startDate?: Date;
+  endDate?: Date;
+}

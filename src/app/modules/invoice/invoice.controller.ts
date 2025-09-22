@@ -36,8 +36,21 @@ const updatePayment = catchAsync(async (req, res) => {
   });
 });
 
+const getMultiPeriodSalesSummary = catchAsync(async (req, res) => {
+  const result = await InvoiceService.getMultiPeriodSalesSummaryFromDB(
+    req.body as any,
+  );
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Sales summary retrieved successfully',
+    data: result,
+  });
+});
+
 export const InvoiceController = {
   createInvoice,
   getAllInvoices,
   updatePayment,
+  getMultiPeriodSalesSummary,
 };
