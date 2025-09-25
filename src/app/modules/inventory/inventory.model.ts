@@ -25,7 +25,7 @@ const inventoryItemSchema = new Schema<IInventoryItem>(
     },
     purchased_price: {
       type: Number,
-      required: true,
+      // required: true,
     },
     price: {
       type: Number,

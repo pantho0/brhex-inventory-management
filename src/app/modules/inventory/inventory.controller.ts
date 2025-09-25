@@ -4,7 +4,6 @@ import sendResponse from '../../utils/sendResponse';
 import { InventoryService } from './inventory.service';
 
 const addInventoryItem = catchAsync(async (req, res) => {
-  console.log(req.body);
   const result = await InventoryService.addInventoryItemIntoDB(req.body);
   sendResponse(res, {
     statusCode: status.OK,
@@ -36,8 +35,21 @@ const getInventoryBySerial = catchAsync(async (req, res) => {
   });
 });
 
+const getInventoryByProductId = catchAsync(async (req, res) => {
+  const result = await InventoryService.getInventoryByProductIdFromDB(
+    req.params.productId as string,
+  );
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Inventory item fetched successfully',
+    data: result,
+  });
+});
+
 export const InventoryController = {
   addInventoryItem,
   getInventoryItems,
   getInventoryBySerial,
+  getInventoryByProductId,
 };

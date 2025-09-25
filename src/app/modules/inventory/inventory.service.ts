@@ -50,8 +50,21 @@ const getInventoryBySerialFromDB = async (serialNumber: string) => {
   return inventoryItem;
 };
 
+const getInventoryByProductIdFromDB = async (productId: string) => {
+  const inventoryItems = await InventoryItem.find({
+    product: productId,
+  }).populate({
+    path: 'product',
+    populate: {
+      path: 'category',
+    },
+  });
+  return inventoryItems;
+};
+
 export const InventoryService = {
   addInventoryItemIntoDB,
   getInventoryItemsFromDB,
   getInventoryBySerialFromDB,
+  getInventoryByProductIdFromDB,
 };
