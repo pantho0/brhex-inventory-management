@@ -62,9 +62,20 @@ const getInventoryByProductIdFromDB = async (productId: string) => {
   return inventoryItems;
 };
 
+const updateInventoryItemIntoDB = async (
+  id: string,
+  payload: IInventoryItem,
+) => {
+  const inventoryItem = await InventoryItem.findByIdAndUpdate(id, payload, {
+    new: true,
+  });
+  return inventoryItem;
+};
+
 export const InventoryService = {
   addInventoryItemIntoDB,
   getInventoryItemsFromDB,
   getInventoryBySerialFromDB,
   getInventoryByProductIdFromDB,
+  updateInventoryItemIntoDB,
 };
