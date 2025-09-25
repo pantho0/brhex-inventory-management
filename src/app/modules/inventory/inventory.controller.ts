@@ -36,7 +36,6 @@ const getInventoryBySerial = catchAsync(async (req, res) => {
 });
 
 const getInventoryByProductId = catchAsync(async (req, res) => {
-  console.log(req.params.productId);
   const result = await InventoryService.getInventoryByProductIdFromDB(
     req.params.productId as string,
   );
