@@ -108,6 +108,11 @@ const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
   }
 };
 
+const getSingleInvoiceByIdFromDB = async (id: string) => {
+  const result = await Invoice.findById(id);
+  return result;
+};
+
 const getAllInvoicesFromDB = async () => {
   const result = await Invoice.find();
   return result;
@@ -322,4 +327,5 @@ export const InvoiceService = {
   getAllInvoicesFromDB,
   updatPayment,
   getMultiPeriodSalesSummaryFromDB,
+  getSingleInvoiceByIdFromDB,
 };

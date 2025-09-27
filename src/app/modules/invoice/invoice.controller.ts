@@ -13,6 +13,18 @@ const createInvoice = catchAsync(async (req, res) => {
   });
 });
 
+const getSingleInvoice = catchAsync(async (req, res) => {
+  const result = await InvoiceService.getSingleInvoiceByIdFromDB(
+    req.params.id as string,
+  );
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Invoice retrieved successfully',
+    data: result,
+  });
+});
+
 const getAllInvoices = catchAsync(async (req, res) => {
   const result = await InvoiceService.getAllInvoicesFromDB();
   sendResponse(res, {
@@ -51,6 +63,7 @@ const getMultiPeriodSalesSummary = catchAsync(async (req, res) => {
 export const InvoiceController = {
   createInvoice,
   getAllInvoices,
+  getSingleInvoice,
   updatePayment,
   getMultiPeriodSalesSummary,
 };
