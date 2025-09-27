@@ -26,6 +26,7 @@ export interface IInvoice {
   paymentStatus: 'paid' | 'partial' | 'due';
   paidAmount: number;
   dueAmount: number;
+  returnAmount?: number;
   paymentHistory: IPaymentHistory[];
   createdAt?: Date;
   updatedAt?: Date;

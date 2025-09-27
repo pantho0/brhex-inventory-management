@@ -34,6 +34,7 @@ const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
 
     const dueAmount = total - paidAmount;
 
+    const returnAmount = paidAmount > total ? paidAmount - total : 0;
     const finalStatus =
       paymentStatus ||
       (dueAmount === 0 ? 'paid' : paidAmount > 0 ? 'partial' : 'due');
@@ -53,6 +54,7 @@ const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
           paymentStatus: finalStatus,
           paidAmount,
           dueAmount,
+          returnAmount, // ✅ new field
           paymentHistory: paidAmount
             ? [{ amount: paidAmount, method: 'cash', date: new Date() }]
             : [],

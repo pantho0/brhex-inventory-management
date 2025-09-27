@@ -48,6 +48,10 @@ const invoiceSchema = new Schema<IInvoice>(
       type: Number,
       default: 0,
     },
+    returnAmount: {
+      type: Number,
+      default: 0,
+    },
     paymentStatus: {
       type: String,
       enum: ['paid', 'partial', 'due'],
