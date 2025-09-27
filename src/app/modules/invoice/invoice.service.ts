@@ -32,12 +32,30 @@ const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
 
     const total = discountedAmount + taxAmount;
 
-    const dueAmount = total - paidAmount;
+    let dueAmount = 0;
+    let returnAmount = 0;
 
-    const returnAmount = paidAmount > total ? paidAmount - total : 0;
-    const finalStatus =
-      paymentStatus ||
-      (dueAmount === 0 ? 'paid' : paidAmount > 0 ? 'partial' : 'due');
+    if (paidAmount < total) {
+      dueAmount = total - paidAmount;
+      returnAmount = 0;
+    } else if (paidAmount > total) {
+      dueAmount = 0;
+      returnAmount = paidAmount - total;
+    }
+
+    let finalStatus: string;
+
+    if (paymentStatus) {
+      finalStatus = paymentStatus;
+    } else if (returnAmount > 0) {
+      finalStatus = 'paid';
+    } else if (dueAmount === 0) {
+      finalStatus = 'paid';
+    } else if (paidAmount > 0) {
+      finalStatus = 'partial';
+    } else {
+      finalStatus = 'due';
+    }
 
     const invoice = await Invoice.create(
       [
@@ -51,10 +69,10 @@ const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
           discount,
           tax,
           total,
-          paymentStatus: finalStatus,
           paidAmount,
           dueAmount,
-          returnAmount, // ✅ new field
+          returnAmount,
+          paymentStatus: finalStatus,
           paymentHistory: paidAmount
             ? [{ amount: paidAmount, method: 'cash', date: new Date() }]
             : [],
@@ -66,31 +84,16 @@ const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
     const productsIds = items.map((i: any) => i.productId);
 
     await ProductStock.updateMany(
-      {
-        product: { $in: productsIds },
-      },
-      {
-        $inc: {
-          inStock: -1,
-          sold: 1,
-        },
-      },
+      { product: { $in: productsIds } },
+      { $inc: { inStock: -1, sold: 1 } },
       { session },
     );
 
     const serialNumbers = items.map((i: any) => i.serialNumber);
-    console.log(serialNumbers);
 
     await InventoryItem.updateMany(
-      {
-        serialNumber: { $in: serialNumbers },
-      },
-      {
-        $set: {
-          status: 'sold',
-          soldAt: new Date(),
-        },
-      },
+      { serialNumber: { $in: serialNumbers } },
+      { $set: { status: 'sold', soldAt: new Date() } },
       { session },
     );
 
