@@ -4,7 +4,14 @@ import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import cors from 'cors';
 const app: Application = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      'https://brhex-inventory-management-client.vercel.app/',
+      'http://localhost:3000',
+    ],
+  }),
+);
 app.use(express.json());
 
 app.get('/', (req: Request, res: Response) => {
