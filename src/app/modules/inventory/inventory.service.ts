@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
 import { IInventoryItem } from './inventory.interface';
 import { InventoryItem } from './inventory.model';

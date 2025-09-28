@@ -3,7 +3,7 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { ProductStockService } from './productStock.service';
 
-const getAllProductStock = catchAsync(async (req, res, next) => {
+const getAllProductStock = catchAsync(async (req, res) => {
   const result = await ProductStockService.getAllProductStockFromDB();
   sendResponse(res, {
     statusCode: status.OK,

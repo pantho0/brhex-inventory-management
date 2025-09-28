@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
 import { IInvoice } from './invoice.interface';
 import { Invoice } from './invoice.model';

@@ -1,8 +1,9 @@
-import { ZodError } from "zod";
-import { TErrorSources, TGenericErrorResponse } from "../interface/error";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ZodError } from 'zod';
+import { TErrorSources, TGenericErrorResponse } from '../interface/error';
 
 const handleZodError = (err: ZodError): TGenericErrorResponse => {
-  const errorSources: TErrorSources = err.issues.map((issue:any) => {
+  const errorSources: TErrorSources = err.issues.map((issue: any) => {
     return {
       path: issue?.path[issue.path.length - 1],
       messsage: issue?.message,
@@ -11,7 +12,7 @@ const handleZodError = (err: ZodError): TGenericErrorResponse => {
   const statusCode = 400;
   return {
     statusCode,
-    message: "Validation Error",
+    message: 'Validation Error',
     errorSources,
   };
 };
