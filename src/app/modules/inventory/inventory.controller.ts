@@ -13,6 +13,16 @@ const addInventoryItem = catchAsync(async (req, res) => {
   });
 });
 
+const bulkAddInventoryItems = catchAsync(async (req, res) => {
+  const result = await InventoryService.bulkAddInventoryItemsIntoDB(req.body);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Inventory items added successfully',
+    data: result,
+  });
+});
+
 const updateInventoryItem = catchAsync(async (req, res) => {
   const result = await InventoryService.updateInventoryItemIntoDB(
     req.params.id as string,
@@ -62,6 +72,7 @@ const getInventoryByProductId = catchAsync(async (req, res) => {
 
 export const InventoryController = {
   addInventoryItem,
+  bulkAddInventoryItems,
   updateInventoryItem,
   getInventoryItems,
   getInventoryBySerial,

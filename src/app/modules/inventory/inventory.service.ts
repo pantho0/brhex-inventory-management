@@ -29,6 +29,48 @@ const addInventoryItemIntoDB = async (payload: IInventoryItem) => {
   }
 };
 
+const bulkAddInventoryItemsIntoDB = async (payload: any) => {
+  const { product, serialNumber, ...commonDetails } = payload;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const itemsToCreate = serialNumber?.map((serial: string) => ({
+      ...commonDetails,
+      product,
+      serialNumber: serial,
+      status: 'in_stock',
+    }));
+
+    const createdInventoryItems = await InventoryItem.create(itemsToCreate, {
+      session,
+      ordered: true,
+    });
+
+    const stockIncrementCount = serialNumber?.length;
+    const now = new Date();
+
+    const productStockUpdate = await ProductStock.updateOne(
+      {
+        product: payload.product,
+      },
+      {
+        $inc: { inStock: stockIncrementCount },
+        $set: { lastUpdated: now },
+      },
+      { upsert: true, session },
+    );
+
+    await session.commitTransaction();
+    return { createdInventoryItems, productStockUpdate };
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+};
+
 const getInventoryItemsFromDB = async () => {
   const inventoryItems = await InventoryItem.find().populate({
     path: 'product',
@@ -74,6 +116,7 @@ const updateInventoryItemIntoDB = async (
 
 export const InventoryService = {
   addInventoryItemIntoDB,
+  bulkAddInventoryItemsIntoDB,
   getInventoryItemsFromDB,
   getInventoryBySerialFromDB,
   getInventoryByProductIdFromDB,
