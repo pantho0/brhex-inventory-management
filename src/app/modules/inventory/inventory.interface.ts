@@ -5,8 +5,9 @@ export interface IInventoryItem {
   serialNumber: string;
   status?: 'in_stock' | 'sold' | 'in_warranty' | 'returned';
   soldAt?: Date;
-  purchased_price?: number;
+  purchased_price: number;
   price: number;
+  warranty?: string;
 }
 
 export type Period = 'daily' | 'weekly' | 'monthly' | 'yearly';
