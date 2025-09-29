@@ -27,7 +27,9 @@ const getSingleInvoice = catchAsync(async (req, res) => {
 });
 
 const getAllInvoices = catchAsync(async (req, res) => {
-  const result = await InvoiceService.getAllInvoicesFromDB();
+  const result = await InvoiceService.getAllInvoicesFromDB(
+    req.query as Record<string, unknown>,
+  );
   sendResponse(res, {
     statusCode: status.OK,
     success: true,

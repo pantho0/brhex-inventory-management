@@ -7,6 +7,8 @@ import { InventoryItem } from '../inventory/inventory.model';
 import AppError from '../../errors/AppError';
 import status from 'http-status';
 import { Period, SalesSummaryOptions } from '../inventory/inventory.interface';
+import QueryBuilder from '../../builder';
+import { invoiceSearchableFields } from './invoice.const';
 
 const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
   const session = await mongoose.startSession();
@@ -114,9 +116,18 @@ const getSingleInvoiceByIdFromDB = async (id: string) => {
   return result;
 };
 
-const getAllInvoicesFromDB = async () => {
-  const result = await Invoice.find();
-  return result;
+const getAllInvoicesFromDB = async (query: Record<string, unknown>) => {
+  const invoiceQuery = new QueryBuilder(Invoice.find(), query)
+    .search(invoiceSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const meta = await invoiceQuery.countTotal();
+  const result = await invoiceQuery.modelQuery;
+
+  return { meta, result };
 };
 
 const updatPayment = async (id: string, paymentData: any) => {
