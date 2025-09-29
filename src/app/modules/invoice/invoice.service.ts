@@ -139,7 +139,7 @@ const updatPayment = async (id: string, paymentData: any) => {
     throw new AppError(status.NOT_FOUND, 'Invoice not found');
   }
 
-  invoice.paidAmount += amount;
+  invoice.paidAmount = invoice.paidAmount + amount;
   invoice.dueAmount = Math.max(invoice.total - invoice.paidAmount, 0);
 
   invoice.paymentStatus =

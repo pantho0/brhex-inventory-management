@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import { IInventoryItem } from './inventory.interface';
 import { InventoryItem } from './inventory.model';
 import { ProductStock } from '../productStock/productStock.model';
+import QueryBuilder from '../../builder';
+import { inventorySearchableFields } from './inventory.const';
 
 const addInventoryItemIntoDB = async (payload: IInventoryItem) => {
   const session = await mongoose.startSession();
@@ -72,15 +74,28 @@ const bulkAddInventoryItemsIntoDB = async (payload: any) => {
   }
 };
 
-const getInventoryItemsFromDB = async () => {
-  const inventoryItems = await InventoryItem.find().populate({
-    path: 'product',
-    populate: {
-      path: 'category',
-    },
-  });
+export const getInventoryItemsFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const inventoryQuery = new QueryBuilder(
+    InventoryItem.find().populate({
+      path: 'product',
+      populate: {
+        path: 'category',
+      },
+    }),
+    query,
+  )
+    .search(inventorySearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
 
-  return inventoryItems;
+  const meta = await inventoryQuery.countTotal();
+  const result = await inventoryQuery.modelQuery;
+
+  return { meta, result };
 };
 
 const getInventoryBySerialFromDB = async (serialNumber: string) => {
@@ -93,16 +108,14 @@ const getInventoryBySerialFromDB = async (serialNumber: string) => {
   return inventoryItem;
 };
 
-const getInventoryByProductIdFromDB = async (productId: string) => {
-  const inventoryItems = await InventoryItem.find({
-    product: productId,
-  }).populate({
+export const getInventoryByProductIdFromDB = async () => {
+  const inventoryItem = await InventoryItem.find().populate({
     path: 'product',
     populate: {
       path: 'category',
     },
   });
-  return inventoryItems;
+  return inventoryItem;
 };
 
 const updateInventoryItemIntoDB = async (

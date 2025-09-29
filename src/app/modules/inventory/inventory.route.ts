@@ -3,6 +3,7 @@ import { InventoryController } from './inventory.controller';
 
 const router = Router();
 
+router.get('/product/:productId', InventoryController.getInventoryByProductId);
 router.post('/add-inventory-item', InventoryController.addInventoryItem);
 router.post(
   '/bulk-add-inventory-items',
@@ -10,7 +11,6 @@ router.post(
 );
 router.get('/', InventoryController.getInventoryItems);
 router.get('/:serialNumber', InventoryController.getInventoryBySerial);
-router.get('/product/:productId', InventoryController.getInventoryByProductId);
 router.put('/update/:id', InventoryController.updateInventoryItem);
 
 export const InventoryRoute = router;

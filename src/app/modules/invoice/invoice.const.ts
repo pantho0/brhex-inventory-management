@@ -1,1 +1,6 @@
-export const invoiceSearchableFields = ['customerName', 'mobile', 'address'];
+export const invoiceSearchableFields = [
+  'customerName',
+  'mobile',
+  'address',
+  'invoiceNo',
+];
