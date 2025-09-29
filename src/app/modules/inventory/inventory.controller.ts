@@ -37,7 +37,7 @@ const updateInventoryItem = catchAsync(async (req, res) => {
 });
 
 const getInventoryItems = catchAsync(async (req, res) => {
-  const result = await InventoryService.getInventoryItemsFromDB();
+  const result = await InventoryService.getInventoryItemsFromDB(req.query);
   sendResponse(res, {
     statusCode: status.OK,
     success: true,
@@ -59,13 +59,21 @@ const getInventoryBySerial = catchAsync(async (req, res) => {
 });
 
 const getInventoryByProductId = catchAsync(async (req, res) => {
-  const result = await InventoryService.getInventoryByProductIdFromDB(
-    req.params.productId as string,
-  );
+  const result = await InventoryService.getInventoryByProductIdFromDB();
   sendResponse(res, {
     statusCode: status.OK,
     success: true,
     message: 'Inventory item fetched successfully',
+    data: result,
+  });
+});
+
+const getInventory = catchAsync(async (req, res) => {
+  const result = await InventoryService.getInventoryFromDB();
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Inventory table fetched successfully',
     data: result,
   });
 });
@@ -77,4 +85,5 @@ export const InventoryController = {
   getInventoryItems,
   getInventoryBySerial,
   getInventoryByProductId,
+  getInventory,
 };

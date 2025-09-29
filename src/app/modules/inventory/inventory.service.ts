@@ -128,6 +128,43 @@ const updateInventoryItemIntoDB = async (
   return inventoryItem;
 };
 
+export const getInventoryFromDB = async () => {
+  const stats = await InventoryItem.aggregate([
+    {
+      $group: {
+        _id: '$product', // group by product
+        in_stock: {
+          $sum: { $cond: [{ $eq: ['$status', 'in_stock'] }, 1, 0] },
+        },
+        sold: {
+          $sum: { $cond: [{ $eq: ['$status', 'sold'] }, 1, 0] },
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'products', // MongoDB collection name for products
+        localField: '_id',
+        foreignField: '_id',
+        as: 'product',
+      },
+    },
+    { $unwind: '$product' },
+    {
+      $project: {
+        _id: 0,
+        productId: '$product._id',
+        productName: '$product.name',
+        in_stock: 1,
+        sold: 1,
+      },
+    },
+    { $sort: { productName: 1 } }, // optional sorting
+  ]);
+
+  return stats;
+};
+
 export const InventoryService = {
   addInventoryItemIntoDB,
   bulkAddInventoryItemsIntoDB,
@@ -135,4 +172,5 @@ export const InventoryService = {
   getInventoryBySerialFromDB,
   getInventoryByProductIdFromDB,
   updateInventoryItemIntoDB,
+  getInventoryFromDB,
 };
