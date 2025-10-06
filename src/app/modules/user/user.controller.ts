@@ -46,7 +46,6 @@ const getMe = catchAsync(async (req, res) => {
 });
 
 const changeUserRole = catchAsync(async (req, res) => {
-  console.log(req.body);
   const result = await UserServices.changeUserRoleIntoDB(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
