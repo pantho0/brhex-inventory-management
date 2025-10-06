@@ -4,6 +4,7 @@ import { ProductRoute } from '../modules/product/product.route';
 import { ProductStockRoute } from '../modules/productStock/productStock.route';
 import { InventoryRoute } from '../modules/inventory/inventory.route';
 import { InvoiceRoute } from '../modules/invoice/invoice.route';
+import { UserRoutes } from '../modules/user/user.route';
 
 const router = Router();
 
@@ -27,6 +28,10 @@ const moduleRoutes = [
   {
     path: '/invoice',
     route: InvoiceRoute,
+  },
+  {
+    path: '/user',
+    route: UserRoutes,
   },
 ];
 
