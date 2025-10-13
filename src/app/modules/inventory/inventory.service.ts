@@ -108,8 +108,12 @@ const getInventoryBySerialFromDB = async (serialNumber: string) => {
   return inventoryItem;
 };
 
-export const getInventoryByProductIdFromDB = async () => {
-  const inventoryItem = await InventoryItem.find().populate({
+export const getInventoryByProductIdFromDB = async (
+  productId: string,
+) => {
+  const inventoryItem = await InventoryItem.find({
+    product: productId,
+  }).populate({
     path: 'product',
     populate: {
       path: 'category',
