@@ -4,6 +4,7 @@ import { barcodeController } from "./barcode.controller";
 
 const router = Router()
 
-router.post('/', barcodeController.createBarcode)
+
+router.post('/generate', barcodeController.generateBarcodes)
 
 export const barcodeRoute = router

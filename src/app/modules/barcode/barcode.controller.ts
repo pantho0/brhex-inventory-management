@@ -1,19 +1,15 @@
-import status from "http-status";
 import catchAsync from "../../utils/catchAsync";
-import sendResponse from "../../utils/sendResponse";
 import { barcodeService } from "./barcode.service";
 
+const generateBarcodes = catchAsync(async (req, res) => {
+  const pdfBase64 = await barcodeService.generateBarcodePage();
+  const pdfBuffer = Buffer.from(pdfBase64, "base64");
 
-const createBarcode = catchAsync(async (req, res, ) => {
-    const result = await barcodeService.generateBarcode()
-    sendResponse(res, {
-        statusCode: status.OK,
-        success: true,
-        message: 'Barcode created successfully',
-        data: result
-    })
-})
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader('Content-Disposition', 'attachment; filename="barcodes.pdf"');
+  res.send(pdfBuffer);
+});
 
 export const barcodeController = {
-    createBarcode
-}
+  generateBarcodes,
+};
