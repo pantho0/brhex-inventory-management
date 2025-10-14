@@ -6,6 +6,7 @@ import { InventoryRoute } from '../modules/inventory/inventory.route';
 import { InvoiceRoute } from '../modules/invoice/invoice.route';
 import { UserRoutes } from '../modules/user/user.route';
 import { AuthRoutes } from '../modules/auth/auth.route';
+import { barcodeRoute } from '../modules/barcode/barcode.route';
 
 const router = Router();
 
@@ -38,6 +39,10 @@ const moduleRoutes = [
     path: '/auth',
     route: AuthRoutes,
   },
+  {
+    path: '/barcode',
+    route: barcodeRoute,
+  }
 ];
 
 moduleRoutes.forEach(route => router.use(route.path, route.route));
