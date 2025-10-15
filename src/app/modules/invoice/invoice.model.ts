@@ -23,6 +23,7 @@ const invoiceSchema = new Schema<IInvoice>(
         productId: { type: Schema.Types.ObjectId, ref: 'Product' },
         productName: String,
         serialNumber: String,
+        warranty: String,
         price: Number,
       },
     ],

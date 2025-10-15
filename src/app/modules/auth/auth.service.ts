@@ -87,7 +87,7 @@ const forgetPasswordGenerator = async (payload: { email: string }) => {
 
   const resetToken = createToken(jwtPayload, config.jwt_access_secret!, '10m');
 
-  const resetLink = `${config.reset_password_link}/reset-password?email=${user?.email}&token=${resetToken}`;
+  const resetLink = `${config.reset_password_link}/change-password?email=${user?.email}&token=${resetToken}`;
 
   await sendEmail(user.email, resetLink);
   return null;

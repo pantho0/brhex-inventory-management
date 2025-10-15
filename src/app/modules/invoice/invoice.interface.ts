@@ -4,6 +4,7 @@ interface IInvoiceItem {
   productId: Types.ObjectId;
   productName: string;
   serialNumber: string;
+  warranty: string;
   price: number;
 }
 
