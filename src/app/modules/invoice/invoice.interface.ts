@@ -5,6 +5,7 @@ interface IInvoiceItem {
   productName: string;
   serialNumber: string;
   warranty: string;
+  purchased_price: number;
   price: number;
 }
 

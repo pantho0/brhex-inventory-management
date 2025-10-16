@@ -63,10 +63,23 @@ const getMultiPeriodSalesSummary = catchAsync(async (req, res) => {
   });
 });
 
+const getMultiPeriodIncomeStatement = catchAsync(async (req, res) => {
+  const result = await InvoiceService.getMultiPeriodIncomeStatementFromDB(
+    req.body as any,
+  );
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Income statement retrieved successfully',
+    data: result,
+  });
+});
+
 export const InvoiceController = {
   createInvoice,
   getAllInvoices,
   getSingleInvoice,
   updatePayment,
   getMultiPeriodSalesSummary,
+  getMultiPeriodIncomeStatement,
 };

@@ -24,6 +24,7 @@ const invoiceSchema = new Schema<IInvoice>(
         productName: String,
         serialNumber: String,
         warranty: String,
+        purchased_price: Number,
         price: Number,
       },
     ],

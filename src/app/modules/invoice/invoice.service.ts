@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
 import { IInvoice } from './invoice.interface';
@@ -125,10 +126,27 @@ const getAllInvoicesFromDB = async (query: Record<string, unknown>) => {
     .fields();
 
   const meta = await invoiceQuery.countTotal();
-  const result = await invoiceQuery.modelQuery;
+  const invoices = await invoiceQuery.modelQuery;
 
-  return { meta, result };
+  // Map each invoice to include profit
+  const resultWithProfit = invoices.map((invoice: any) => {
+    const totalPurchasedPrice = invoice.items.reduce(
+      (sum: number, item: any) => sum + (item.purchased_price || 0),
+      0
+    );
+
+    const profit = invoice.total - totalPurchasedPrice;
+
+    return {
+      ...invoice.toObject(), // in case it's a Mongoose document
+      totalPurchasedPrice,
+      profit,
+    };
+  });
+
+  return { meta, result: resultWithProfit };
 };
+
 
 const updatPayment = async (id: string, paymentData: any) => {
   const { amount, method } = paymentData;
@@ -334,10 +352,115 @@ export const getMultiPeriodSalesSummaryFromDB = async ({
   };
 };
 
+export const getMultiPeriodIncomeStatementFromDB = async ({
+  periods,
+  startDate,
+  endDate,
+}: SalesSummaryOptions) => {
+
+  const match: any = { paymentStatus: "paid" };
+  if (startDate || endDate) {
+    match.createdAt = {};
+    if (startDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      match.createdAt.$gte = start;
+    }
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      match.createdAt.$lte = end;
+    }
+  }
+
+  const results: Record<Period, any[]> = {
+    daily: [],
+    weekly: [],
+    monthly: [],
+    yearly: [],
+  };
+
+  // --- Fetch all invoices that match ---
+  const invoices = await Invoice.find(match).lean();
+
+  // --- Build per-period statements ---
+  for (const period of periods) {
+    
+    const periodData: any[] = [];
+
+    invoices.forEach((inv) => {
+      // @ts-ignore
+      const created = new Date(inv.createdAt);
+
+      // Profit and total purchased per invoice
+      const totalPurchasedPrice = inv.items?.reduce((sum: number, i: any) => sum + i.purchased_price, 0) || 0;
+      const profit = (inv.total || 0) - totalPurchasedPrice;
+
+      let periodLabel = "";
+      switch (period) {
+        case "daily":
+          periodLabel = created.toLocaleDateString("en-GB"); // e.g., 16/10/2025
+          break;
+        case "weekly": {
+          const startOfWeek = new Date(created);
+          startOfWeek.setDate(created.getDate() - created.getDay() + 1); // Monday
+          const endOfWeek = new Date(startOfWeek);
+          endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday
+          periodLabel = `W${getWeekNumber(created)} (${startOfWeek.toLocaleDateString("en-GB")} - ${endOfWeek.toLocaleDateString("en-GB")})`;
+          break;
+        }
+        case "monthly":
+          periodLabel = `${created.getFullYear()}-${String(created.getMonth() + 1).padStart(2, "0")}`;
+          break;
+        case "yearly":
+          periodLabel = `${created.getFullYear()}`;
+          break;
+      }
+
+      periodData.push({
+        periodLabel,
+        totalPurchasedPrice,
+        profit,
+        invoices: 1, // Each invoice counts as 1
+      });
+    });
+
+    results[period] = periodData;
+  }
+
+  // --- Cumulative totals ---
+  const cumulativeTotals = invoices.reduce(
+    (acc, inv) => {
+      const totalPurchasedPrice = inv.items?.reduce((sum: number, i: any) => sum + i.purchased_price, 0) || 0;
+      const profit = (inv.total || 0) - totalPurchasedPrice;
+      return {
+        totalPurchasedPrice: acc.totalPurchasedPrice + totalPurchasedPrice,
+        profit: acc.profit + profit,
+        invoices: acc.invoices + 1,
+      };
+    },
+    { totalPurchasedPrice: 0, profit: 0, invoices: 0 }
+  );
+
+  return { summary: results, cumulativeTotals };
+};
+
+// --- Helper to get ISO week number ---
+function getWeekNumber(d: Date) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  return Math.ceil((((date.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+}
+
+
+
 export const InvoiceService = {
   createInvoiceIntoDB,
   getAllInvoicesFromDB,
   updatPayment,
   getMultiPeriodSalesSummaryFromDB,
   getSingleInvoiceByIdFromDB,
+  getMultiPeriodIncomeStatementFromDB,
 };
