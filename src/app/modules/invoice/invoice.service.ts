@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
 import { IInvoice } from './invoice.interface';
@@ -10,6 +10,7 @@ import status from 'http-status';
 import { Period, SalesSummaryOptions } from '../inventory/inventory.interface';
 import QueryBuilder from '../../builder';
 import { invoiceSearchableFields } from './invoice.const';
+
 
 const createInvoiceIntoDB = async (invoiceData: IInvoice) => {
   const session = await mongoose.startSession();
@@ -206,83 +207,95 @@ export const getMultiPeriodSalesSummaryFromDB = async ({
     }
   }
 
+  // Bangladesh timezone offset (+6 hours)
+  const TIMEZONE_OFFSET_HOURS = 6;
+
   const buildPipeline = (period: Period) => {
     let groupId: any = {};
     let periodLabel: any = {};
 
+    // Convert createdAt -> local time (Bangladesh)
+    const localCreatedAt = {
+      $dateAdd: {
+        startDate: "$createdAt",
+        unit: "hour",
+        amount: TIMEZONE_OFFSET_HOURS,
+      },
+    };
+
     switch (period) {
-      case 'daily':
+      case "daily":
         groupId = {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          day: { $dayOfMonth: '$createdAt' },
+          year: { $year: localCreatedAt },
+          month: { $month: localCreatedAt },
+          day: { $dayOfMonth: localCreatedAt },
         };
         periodLabel = {
           $concat: [
-            { $toString: '$_id.year' },
-            '-',
+            { $toString: "$_id.year" },
+            "-",
             {
               $cond: [
-                { $lt: ['$_id.month', 10] },
-                { $concat: ['0', { $toString: '$_id.month' }] },
-                { $toString: '$_id.month' },
+                { $lt: ["$_id.month", 10] },
+                { $concat: ["0", { $toString: "$_id.month" }] },
+                { $toString: "$_id.month" },
               ],
             },
-            '-',
+            "-",
             {
               $cond: [
-                { $lt: ['$_id.day', 10] },
-                { $concat: ['0', { $toString: '$_id.day' }] },
-                { $toString: '$_id.day' },
+                { $lt: ["$_id.day", 10] },
+                { $concat: ["0", { $toString: "$_id.day" }] },
+                { $toString: "$_id.day" },
               ],
             },
           ],
         };
         break;
 
-      case 'weekly':
+      case "weekly":
         groupId = {
-          year: { $isoWeekYear: '$createdAt' },
-          week: { $isoWeek: '$createdAt' },
+          year: { $isoWeekYear: localCreatedAt },
+          week: { $isoWeek: localCreatedAt },
         };
         periodLabel = {
           $concat: [
-            { $toString: '$_id.year' },
-            '-W',
+            { $toString: "$_id.year" },
+            "-W",
             {
               $cond: [
-                { $lt: ['$_id.week', 10] },
-                { $concat: ['0', { $toString: '$_id.week' }] },
-                { $toString: '$_id.week' },
+                { $lt: ["$_id.week", 10] },
+                { $concat: ["0", { $toString: "$_id.week" }] },
+                { $toString: "$_id.week" },
               ],
             },
           ],
         };
         break;
 
-      case 'monthly':
+      case "monthly":
         groupId = {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
+          year: { $year: localCreatedAt },
+          month: { $month: localCreatedAt },
         };
         periodLabel = {
           $concat: [
-            { $toString: '$_id.year' },
-            '-',
+            { $toString: "$_id.year" },
+            "-",
             {
               $cond: [
-                { $lt: ['$_id.month', 10] },
-                { $concat: ['0', { $toString: '$_id.month' }] },
-                { $toString: '$_id.month' },
+                { $lt: ["$_id.month", 10] },
+                { $concat: ["0", { $toString: "$_id.month" }] },
+                { $toString: "$_id.month" },
               ],
             },
           ],
         };
         break;
 
-      case 'yearly':
-        groupId = { year: { $year: '$createdAt' } };
-        periodLabel = { $toString: '$_id.year' };
+      case "yearly":
+        groupId = { year: { $year: localCreatedAt } };
+        periodLabel = { $toString: "$_id.year" };
         break;
     }
 
@@ -293,9 +306,9 @@ export const getMultiPeriodSalesSummaryFromDB = async ({
       {
         $group: {
           _id: groupId,
-          totalPaid: { $sum: '$paidAmount' },
-          totalDue: { $sum: '$dueAmount' },
-          totalSales: { $sum: '$total' },
+          totalPaid: { $sum: "$paidAmount" },
+          totalDue: { $sum: "$dueAmount" },
+          totalSales: { $sum: "$total" },
           invoices: { $sum: 1 },
         },
       },
@@ -309,7 +322,7 @@ export const getMultiPeriodSalesSummaryFromDB = async ({
           invoices: 1,
         },
       },
-      { $sort: { periodLabel: 1 } },
+      { $sort: { periodLabel: 1 } }
     );
 
     return pipeline;
@@ -324,9 +337,9 @@ export const getMultiPeriodSalesSummaryFromDB = async ({
     {
       $group: {
         _id: null,
-        totalPaid: { $sum: '$paidAmount' },
-        totalDue: { $sum: '$dueAmount' },
-        totalSales: { $sum: '$total' },
+        totalPaid: { $sum: "$paidAmount" },
+        totalDue: { $sum: "$dueAmount" },
+        totalSales: { $sum: "$total" },
         invoices: { $sum: 1 },
       },
     },
@@ -343,14 +356,24 @@ export const getMultiPeriodSalesSummaryFromDB = async ({
 
   return {
     summary: results,
-    cumulativeTotals: cumulativeTotals[0] || {
-      totalPaid: 0,
-      totalDue: 0,
-      totalSales: 0,
-      invoices: 0,
-    },
+    cumulativeTotals:
+      cumulativeTotals[0] || {
+        totalPaid: 0,
+        totalDue: 0,
+        totalSales: 0,
+        invoices: 0,
+      },
   };
 };
+
+// Helper function to get ISO week number
+function getWeekNumber(date: Date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+}
 
 export const getMultiPeriodIncomeStatementFromDB = async ({
   periods,
@@ -359,19 +382,25 @@ export const getMultiPeriodIncomeStatementFromDB = async ({
 }: SalesSummaryOptions) => {
 
   const match: any = { paymentStatus: "paid" };
+
   if (startDate || endDate) {
     match.createdAt = {};
+
     if (startDate) {
       const start = new Date(startDate);
       start.setHours(0, 0, 0, 0);
       match.createdAt.$gte = start;
     }
+
     if (endDate) {
       const end = new Date(endDate);
       end.setHours(23, 59, 59, 999);
       match.createdAt.$lte = end;
     }
   }
+
+  // --- Fetch all invoices ---
+  const invoices = await Invoice.find(match).lean();
 
   const results: Record<Period, any[]> = {
     daily: [],
@@ -380,58 +409,69 @@ export const getMultiPeriodIncomeStatementFromDB = async ({
     yearly: [],
   };
 
-  // --- Fetch all invoices that match ---
-  const invoices = await Invoice.find(match).lean();
+  // --- Bangladesh timezone offset (+6 hours) ---
+  const TIMEZONE_OFFSET_HOURS = 6 * 60 * 60 * 1000;
 
-  // --- Build per-period statements ---
   for (const period of periods) {
-    
-    const periodData: any[] = [];
+    const summaryMap = new Map<string, { totalPurchasedPrice: number; profit: number; invoices: number }>();
 
     invoices.forEach((inv) => {
-      // @ts-ignore
-      const created = new Date(inv.createdAt);
+      // Convert createdAt to Bangladesh time
+      if (!inv.createdAt) return;
+      const localTime = new Date(new Date(inv.createdAt).getTime() + TIMEZONE_OFFSET_HOURS);
 
-      // Profit and total purchased per invoice
-      const totalPurchasedPrice = inv.items?.reduce((sum: number, i: any) => sum + i.purchased_price, 0) || 0;
+      // Calculate totals from items
+      const totalPurchasedPrice =
+        inv.items?.reduce((sum: number, item: any) => sum + (item.purchased_price || 0), 0) || 0;
       const profit = (inv.total || 0) - totalPurchasedPrice;
 
       let periodLabel = "";
+
       switch (period) {
         case "daily":
-          periodLabel = created.toLocaleDateString("en-GB"); // e.g., 16/10/2025
+          periodLabel = `${localTime.getFullYear()}-${String(localTime.getMonth() + 1).padStart(2, "0")}-${String(localTime.getDate()).padStart(2, "0")}`;
           break;
+
         case "weekly": {
-          const startOfWeek = new Date(created);
-          startOfWeek.setDate(created.getDate() - created.getDay() + 1); // Monday
-          const endOfWeek = new Date(startOfWeek);
-          endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday
-          periodLabel = `W${getWeekNumber(created)} (${startOfWeek.toLocaleDateString("en-GB")} - ${endOfWeek.toLocaleDateString("en-GB")})`;
+          const week = getWeekNumber(localTime);
+          periodLabel = `${localTime.getFullYear()}-W${String(week).padStart(2, "0")}`;
           break;
         }
+
         case "monthly":
-          periodLabel = `${created.getFullYear()}-${String(created.getMonth() + 1).padStart(2, "0")}`;
+          periodLabel = `${localTime.getFullYear()}-${String(localTime.getMonth() + 1).padStart(2, "0")}`;
           break;
+
         case "yearly":
-          periodLabel = `${created.getFullYear()}`;
+          periodLabel = `${localTime.getFullYear()}`;
           break;
       }
 
-      periodData.push({
-        periodLabel,
-        totalPurchasedPrice,
-        profit,
-        invoices: 1, // Each invoice counts as 1
-      });
+      // Aggregate by periodLabel
+      if (!summaryMap.has(periodLabel)) {
+        summaryMap.set(periodLabel, { totalPurchasedPrice: 0, profit: 0, invoices: 0 });
+      }
+
+      const existing = summaryMap.get(periodLabel)!;
+      existing.totalPurchasedPrice += totalPurchasedPrice;
+      existing.profit += profit;
+      existing.invoices += 1;
     });
 
-    results[period] = periodData;
+    // Convert map to array and sort chronologically
+    results[period] = Array.from(summaryMap.entries())
+      .map(([periodLabel, values]) => ({
+        periodLabel,
+        ...values,
+      }))
+      .sort((a, b) => a.periodLabel.localeCompare(b.periodLabel));
   }
 
   // --- Cumulative totals ---
   const cumulativeTotals = invoices.reduce(
     (acc, inv) => {
-      const totalPurchasedPrice = inv.items?.reduce((sum: number, i: any) => sum + i.purchased_price, 0) || 0;
+      const totalPurchasedPrice =
+        inv.items?.reduce((sum: number, item: any) => sum + (item.purchased_price || 0), 0) || 0;
       const profit = (inv.total || 0) - totalPurchasedPrice;
       return {
         totalPurchasedPrice: acc.totalPurchasedPrice + totalPurchasedPrice,
@@ -445,14 +485,7 @@ export const getMultiPeriodIncomeStatementFromDB = async ({
   return { summary: results, cumulativeTotals };
 };
 
-// --- Helper to get ISO week number ---
-function getWeekNumber(d: Date) {
-  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  const dayNum = date.getUTCDay() || 7;
-  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-  return Math.ceil((((date.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-}
+
 
 
 
