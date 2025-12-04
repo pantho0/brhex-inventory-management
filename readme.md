@@ -78,10 +78,10 @@ The system is designed using a clean relational structure.
 
 ## 📥 Clone the Repository
 
-````bash
+```bash
 git clone https://github.com/your-username/your-repo-name.git
 cd your-repo-name
-
+```
 
 ```bash
 npm install
@@ -90,4 +90,8 @@ npm run build
 npm start
 
 
-````
+```
+
+## API Postman Collection
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://.postman.co/workspace/My-Workspace~e3a200b6-82da-4bdb-8199-62c7e7d6092a/collection/32753226-e0bca101-1510-4df8-befa-18d38df198d4?action=share&creator=32753226&active-environment=32753226-463cd41c-98df-41c5-9b05-da4cb4b5c3df)
