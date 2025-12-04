@@ -12,6 +12,7 @@ The system is designed using a clean relational structure.
 ![BRHEX Inventory ER Diagram](./docs/er-diagram.png)
 
 🔗 **Live Demo:** https://brhex-inventory-management-client.vercel.app/
+🔗 **Requirement Analysis:** https://docs.google.com/document/d/1ZsLyhXlbE-40RM3Avk70LvFQheMPn8ZNwq12JA5oUpc/edit?usp=sharing
 
 ---
 
