@@ -1,6 +1,10 @@
 # 📦 BRHEX Inventory Management System
 
-A complete inventory, sales, and invoice management system designed for small to medium businesses.  
+A complete inventory, sales, and invoice management system designed for small to medium businesses.
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-blue?style=for-the-badge)](https://brhex-inventory-management-client.vercel.app/)
+[![Requirement Analysis](https://img.shields.io/badge/Requirement%20Analysis-View%20Docs-lightgrey?style=for-the-badge)](https://docs.google.com/document/d/1ZsLyhXlbE-40RM3Avk70LvFQheMPn8ZNwq12JA5oUpc/edit?usp=sharing)
+
 Features include barcode scanning, serial-based inventory tracking, dynamic invoice creation, PDF & POS bill generation, and advanced sales analytics.
 
 ---
@@ -10,9 +14,6 @@ Features include barcode scanning, serial-based inventory tracking, dynamic invo
 The system is designed using a clean relational structure.
 
 ![BRHEX Inventory ER Diagram](./docs/er-diagram.png)
-
-🔗 **Live Demo:** https://brhex-inventory-management-client.vercel.app/
-🔗 **Requirement Analysis:** https://docs.google.com/document/d/1ZsLyhXlbE-40RM3Avk70LvFQheMPn8ZNwq12JA5oUpc/edit?usp=sharing
 
 ---
 
@@ -37,7 +38,7 @@ The system is designed using a clean relational structure.
 
 ### 🛠️ **Inventory Management**
 
-- Serial number–based tracking
+- **Serial number–based tracking**
 - Auto update inventory status:
   - `in_stock`
   - `sold`
@@ -61,8 +62,8 @@ The system is designed using a clean relational structure.
 ### 🖨️ **Invoice Output**
 
 - Auto-generate:
-  - A4 PDF Invoice
-  - POS-size thermal bill
+  - **A4 PDF Invoice**
+  - **POS-size thermal bill**
 
 ### 📊 **Dashboard Analytics**
 
@@ -80,19 +81,10 @@ The system is designed using a clean relational structure.
 ## 📥 Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
+git clone [https://github.com/pantho0/brhex-inventory-management.git](https://github.com/pantho0/brhex-inventory-management.git)
 cd your-repo-name
-```
 
-```bash
 npm install
 npm run start:dev
-npm run build
-npm start
-
-
+npm run start:prod
 ```
-
-## API Postman Collection
-
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://postman.co/workspace/My-Workspace~e3a200b6-82da-4bdb-8199-62c7e7d6092a/collection/32753226-e0bca101-1510-4df8-befa-18d38df198d4?action=share&creator=32753226&active-environment=32753226-463cd41c-98df-41c5-9b05-da4cb4b5c3df)
