@@ -105,6 +105,17 @@ This system is built using the **T3 stack** principles, utilizing **TypeScript**
   <img src="https://img.shields.io/badge/ACTION%20REQUIRED-Create%20a%20.env%20file%20and%20follow%20.env.example-red?style=for-the-badge&labelColor=black"/>
 </p>
 
+### 🔑 Default Admin Credentials
+
+Upon initial clone and setup, a default admin user will be automatically created for immediate login:
+
+| Field        | Value             |
+| :----------- | :---------------- |
+| **Email**    | `admin@brhex.com` |
+| **Password** | `Brhex@123`       |
+
+---
+
 ## 📥 Clone the Repository
 
 ```bash
