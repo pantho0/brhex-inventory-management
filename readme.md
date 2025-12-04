@@ -101,6 +101,10 @@ This system is built using the **T3 stack** principles, utilizing **TypeScript**
 
 ---
 
+<p align="center">
+  <img src="https://img.shields.io/badge/ACTION%20REQUIRED-Create%20a%20.env%20file%20and%20follow%20.env.example-red?style=for-the-badge&labelColor=black"/>
+</p>
+
 ## 📥 Clone the Repository
 
 ```bash
